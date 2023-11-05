@@ -1,24 +1,28 @@
 /** @param {NS} ns */
 export async function main(ns) {
 
-  let foundServers = scanAll(ns,false);
-
-  //removes home
-  foundServers.shift();
-
+  let foundServers = [];
   let hackThresh = 0;
   let moneyPercent = 0;
 
-  let bool = true;
+  while (true) {
 
-  while (bool) {
+    foundServers = scanAll(ns, false);
+    
+    //removes home from being hacked
+    foundServers.shift();
 
     for (let server of foundServers) {
       if (!ns.hasRootAccess(server)) {
         continue;
       }
       hackThresh = ns.hackAnalyzeChance(server);
-      moneyPercent = ns.getServerMoneyAvailable(server) / ns.getServerMaxMoney(server);
+      maxMoney = ns.getServerMaxMoney(server);
+      if (maxMoney == 0) {
+        continue;
+      }
+      availableMoney = ns.getServerMoneyAvailable(server);
+      moneyPercent = availableMoney / maxMoney;
 
       if (moneyPercent <= .90) {
         await ns.grow(server);
@@ -43,8 +47,7 @@ export function scanAll(ns, includeServers) {
         continue;
       }
       foundServers.push(serverScan[j]);
-      if(serverScan[j].includes('server-')){
-              postServerStats(ns,serverScan[j]);
+      if (serverScan[j].includes('server-')) {
       }
 
     }
