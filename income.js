@@ -1,5 +1,5 @@
 /** @param {NS} ns */
-
+//Automatically purchases/upgrades hacknodes and servers.
 export async function main(ns) {
 
   while (true) {

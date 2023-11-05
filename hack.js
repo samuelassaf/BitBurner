@@ -1,4 +1,6 @@
 /** @param {NS} ns */
+
+//When run, searches through all hackable servers and calls the grow,hack,and weaken functions.
 export async function main(ns) {
 
   let foundServers = [];

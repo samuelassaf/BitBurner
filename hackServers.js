@@ -1,12 +1,15 @@
 /** @param {NS} ns */
+//Scans through all servers and attempts to obtain root access. 
+//For each server with root access, calls the addScripts.js to populate the server with desired scripts.
+//Once the first loop of servers is complete, continually searches for new servers to obtain root access on.
+
+
 import { scanAll } from 'hack.js';
 export async function main(ns) {
 
   let unhackedServers = hackAll(ns);
 
-  let bool = true;
-
-  while (bool) {
+  while (true) {
 
     for (let i = unhackedServers.length - 1; i >= 0; i--) {
       if (i < 0) {
