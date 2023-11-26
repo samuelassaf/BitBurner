@@ -7,7 +7,7 @@ export async function main(ns) {
   context.scripts = [];
   context.totalScriptRam = 0;
   context.totalAvailableThreads = 0;
-  context.files = ['hack.js']; //["hack.js", "grow.js", "weaken.js"];
+  context.files = ["hack.js", "grow.js", "weaken.js"];
   
   setScriptObjects(context, ns);
   killScripts(ns, context);
@@ -21,14 +21,14 @@ export async function main(ns) {
   ns.tprint('Available RAM for ' + context.destination + ': ' + context.availableRam);
   ns.tprint('total Script RAM: ' + context.totalScriptRam);
 */
-  calculateThreads(context, ns);
+  //calculateThreads(context, ns);
 
   if (context.totalAvailableThreads == 0) {
     //ns.tprint('no threads for' + context.destination);
-    return;
+    //return;
   }
 
-  executeScripts(context, ns);
+  //executeScripts(context, ns);
 }
 
 function setScriptObjects(context, ns) {
@@ -55,6 +55,10 @@ function calculateThreads(context, ns) {
   let ramAvailable = true;
 
   let availableRam = ns.getServerMaxRam(context.destination) - ns.getServerUsedRam(context.destination);
+
+  if(context.destination == 'home'){
+    availableRam *= .9;
+  }
 
   if (context.destination.includes('server-')) {
     //ns.tprint('Purchased Server Ram: ' + context.destination + '...' + availableRam);
