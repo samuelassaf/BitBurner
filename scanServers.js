@@ -13,6 +13,7 @@ export async function main(ns) {
 
 export function scanAll(ns, includePurchasedServers) {
   let foundServers = ['home'];
+  let totalAvailableMoney = 0;
   for (let i = 0; i < foundServers.length; i++) {
     let serverScan = ns.scan(foundServers[i]);
     for (let j = 0; j < serverScan.length; j++) {
@@ -20,10 +21,11 @@ export function scanAll(ns, includePurchasedServers) {
         continue;
       }
       foundServers.push(serverScan[j]);
-      postServerStats(ns, serverScan[j]);
+      totalAvailableMoney += postServerStats(ns, serverScan[j]);
     }
   }
 
+  ns.tprint('Total Available Money: ' + formatMoney(totalAvailableMoney));
   return foundServers;
 }
 
@@ -37,9 +39,11 @@ function postServerStats(ns, server) {
     formatMoney(maxMoney) +
     ' - ' + ((availableMoney / maxMoney)*100).toFixed(2) + '%'
   );
+
+  return availableMoney;
 }
 
-function formatMoney(money) {
+export function formatMoney(money) {
   let text = Math.trunc(money).toString();
   let charCount = 0;
   let formattedText = '';

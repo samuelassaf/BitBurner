@@ -3,57 +3,34 @@
 //For each server with root access, calls the addScripts.js to populate the server with desired scripts.
 //Once the first loop of servers is complete, continually searches for new servers to obtain root access on.
 
-
-import { scanAll } from 'hack.js';
 export async function main(ns) {
 
-  let unhackedServers = hackAll(ns);
-
+  hackServer('home', ns);
+  let foundServers = ['home'];
   while (true) {
-
-    for (let i = unhackedServers.length - 1; i >= 0; i--) {
-      if (i < 0) {
-        bool = false;
-        break;
-      }
-      if (hackServer(unhackedServers[i], ns, ns.getHackingLevel())) {
-        unhackedServers.splice(i, 1);
+    for (let i = 0; i < foundServers.length; i++) {
+      let serverScan = ns.scan(foundServers[i]);
+      for (let j = 0; j < serverScan.length; j++) {
+        if (foundServers.includes(serverScan[j]) || serverScan[j].includes('server-')) {
+          continue;
+        }
+        if (hackServer(serverScan[j], ns)) {
+          foundServers.push(serverScan[j]);
+        }
       }
     }
-    await ns.grow('foodnstuff');
+    await ns.asleep(1000);
   }
 
 }
 
 
-function hackAll(ns) {
-  let foundServers = scanAll(ns, true);
-
-  //ns.tprint('servers: ' + foundServers);
-
+export function hackServer(server, ns) {
   let currentHackingLevel = ns.getHackingLevel();
-
-  let unhackedServers = [];
-
-  for (let i = 0; i < foundServers.length; i++) {
-    let hacked = hackServer(foundServers[i], ns, currentHackingLevel);
-
-    //ns.tprint('Hacked Status: ' + hacked);
-    if (!hacked) {
-      //ns.tprint('unhacked server push ' + foundServers[i]);
-      unhackedServers.push(foundServers[i]);
-    }
-  }
-
-  return unhackedServers;
-}
-
-
-function hackServer(server, ns, currentHackingLevel) {
   let accessSuccess = gainAccess(server, currentHackingLevel, ns);
   if (accessSuccess) {
     //ns.tprint('Executing addScripts on ' + server);
-    ns.exec('addScripts.js', 'home', 1, server, 'home');
+    //ns.exec('addScripts.js', 'home', 1, server, 'home');
     return true;
   }
   else {
@@ -90,16 +67,27 @@ function gainAccess(server, currentHackingLevel, ns) {
 }
 
 function openPorts(server, numPorts, ns) {
-
   switch (numPorts) {
     case 5:
-      return false;
+      if (ns.fileExists('SQLInject.exe')) {
+        ns.tprint('SQL Inject...');
+        ns.sqlinject(server);
+      }
+      else {
+        return false;
+      }
     case 4:
-      return false;
+      if (ns.fileExists('HTTPWorm.exe')) {
+        ns.tprint('HTTP Worm...');
+        ns.httpworm(server);
+      }
+      else {
+        return false;
+      }
     case 3:
       if (ns.fileExists('relaySMTP.exe')) {
         ns.tprint('relay SMTP...');
-        ns.ftpcrack(server);
+        ns.relaysmtp(server);
       }
       else {
         return false;

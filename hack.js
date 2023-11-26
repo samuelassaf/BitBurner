@@ -3,9 +3,11 @@
 //When run, searches through all hackable servers and calls the grow,hack,and weaken functions.
 export async function main(ns) {
 
-  let foundServers = [];
+  await ns.hack(ns.args[0]);
+  /*let foundServers = [];
   let hackThresh = 0;
   let moneyPercent = 0;
+  let takeAll = false;
 
   while (true) {
 
@@ -18,12 +20,18 @@ export async function main(ns) {
       if (!ns.hasRootAccess(server)) {
         continue;
       }
-      hackThresh = ns.hackAnalyzeChance(server);
-      maxMoney = ns.getServerMaxMoney(server);
-      if (maxMoney == 0) {
+
+      if(takeAll){
+        await ns.hack(server);
         continue;
       }
-      availableMoney = ns.getServerMoneyAvailable(server);
+      hackThresh = ns.hackAnalyzeChance(server);
+      let maxMoney = ns.getServerMaxMoney(server);
+      if (maxMoney == 0) {
+        await ns.hack(server);
+        continue;
+      }
+      let availableMoney = ns.getServerMoneyAvailable(server);
       moneyPercent = availableMoney / maxMoney;
 
       if (moneyPercent <= .90) {
@@ -36,7 +44,7 @@ export async function main(ns) {
         await ns.weaken(server);
       }
     }
-  }
+  }*/
 
 }
 
